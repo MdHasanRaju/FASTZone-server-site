@@ -24,6 +24,7 @@ async function run() {
     const database = client.db("cars_shop");
     const carsCollection = database.collection("cars");
     const ordersCollection = database.collection("orders");
+    const reviewCollection = database.collection("review");
 
     // all cars
     app.get('/cars', async(req, res) => {
@@ -45,7 +46,6 @@ async function run() {
       app.post('/addOrders', async(req, res) => {
         const orders = req.body;
         const result = await ordersCollection.insertOne(orders)
-        console.log(orders);
         res.send(result)
       })
 
@@ -53,9 +53,32 @@ async function run() {
       app.get("/myOrders/:email", async(req, res) => {
         const order = req.params.email;
         const result = await ordersCollection.find({email: order}).toArray();
-        console.log(result)
         res.send(result);
       });
+
+      // customer ordered item delete process
+      app.delete("/deleteProduct/:id", async(req, res) => {
+        const id = req.params.id;
+        const Object = { _id: ObjectId(id) };
+        const result = await ordersCollection.deleteOne(Object);
+        console.log(result)
+        res.send(result)
+      });
+
+      // customer review
+      app.post("/addReview", async(req, res) => {
+        const review = req.body;
+        const result = await reviewCollection.insertOne(review);
+        console.log(review);
+        res.send(result)
+      });
+
+      // review get process
+      app.get('/addReview', async(req, res) =>{
+        const cursor = reviewCollection.find({})
+        console.log(cursor);
+        res.send(cursor)
+      })
 
   }
   finally {
