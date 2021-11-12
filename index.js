@@ -11,8 +11,6 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// user : carsDB
-// pass: U7GlURVw15Fq6yJg
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.6cjag.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 
@@ -27,15 +25,14 @@ async function run() {
     const reviewCollection = database.collection("review");
     const usersCollection = database.collection("users");
 
-    // all cars
+    // all cars get
     app.get('/cars', async(req, res) => {
       const cursor = carsCollection.find({});
       const result = await cursor.toArray();
-      // console.log(result)
       res.send(result);
     })
 
-    // single car
+    // single car get
     app.get('/singleCar/:id', async(req, res) => {
       const id = req.params.id;
       const Object = {_id: ObjectId(id)};
@@ -56,6 +53,13 @@ async function run() {
         const result = await ordersCollection.find({email: order}).toArray();
         res.send(result);
       });
+
+      // All orders get process for manage orders
+      app.get('/orders', async(req, res) => {
+        const cursor = ordersCollection.find({});
+        const result = await cursor.toArray();
+        res.send(result)
+      })
 
       // customer ordered item delete process
       app.delete("/deleteProduct/:id", async(req, res) => {
@@ -101,7 +105,6 @@ async function run() {
         );
         res.json(result);
       });
-
 
       // Make Admin process for registration
       app.put('/users/admin', async(req, res) => {
