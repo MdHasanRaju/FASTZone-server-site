@@ -25,6 +25,7 @@ async function run() {
     const carsCollection = database.collection("cars");
     const ordersCollection = database.collection("orders");
     const reviewCollection = database.collection("review");
+    const usersCollection = database.collection("users");
 
     // all cars
     app.get('/cars', async(req, res) => {
@@ -74,12 +75,43 @@ async function run() {
       });
 
       // review get process
-      // app.get("/review", async (req, res) => {
-      //   console.log("review getting");
-      //   const cursor = reviewCollection.find({});
-      //   console.log(cursor);
-      //   res.send(cursor)
-      // });
+      app.get("/review", async (req, res) => {
+        const cursor = await reviewCollection.find({}).toArray();
+        res.send(cursor)
+      });
+
+      // USER DATA POST METHOD FOR ADMIN CREATION
+      app.post('/users', async(req, res) => {
+        const user = req.body;
+        const result = await usersCollection.insertOne(user);
+        res.send(result)
+      })
+
+      // make admin process for google sing in
+      app.put("/users", async (req, res) => {
+        const user = req.body;
+        console.log(user)
+        const filter = { email: user.email };
+        const options = { upsert: true };
+        const updateDoc = { $set: user };
+        const result = await usersCollection.updateOne(
+          filter,
+          updateDoc,
+          options
+        );
+        res.json(result);
+      });
+
+
+      // Make Admin process for registration
+      app.put('/users/admin', async(req, res) => {
+        const user = req.query;
+        const filter = {email: user.email};
+        const updateDoc = {$set: {role: 'admin'}};
+        const result = await usersCollection.updateOne(filter, updateDoc)
+        console.log(user);
+        res.send(result);
+      })
 
   }
   finally {
