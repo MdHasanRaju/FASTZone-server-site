@@ -74,11 +74,12 @@ async function run() {
       });
 
       // review get process
-      app.get('/addReview', async(req, res) =>{
-        const cursor = reviewCollection.find({})
-        console.log(cursor);
-        res.send(cursor)
-      })
+      // app.get("/review", async (req, res) => {
+      //   console.log("review getting");
+      //   const cursor = reviewCollection.find({});
+      //   console.log(cursor);
+      //   res.send(cursor)
+      // });
 
   }
   finally {
