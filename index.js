@@ -39,6 +39,15 @@ async function run() {
       res.send(result);
     });
 
+    // Admin Manage Products Delete Process
+    app.delete("/deletePd/:id", async (req, res) => {
+      const id = req.params.id;
+      const Object = { _id: ObjectId(id) };
+      const result = await carsCollection.deleteOne(Object);
+      res.send(result);
+    });
+
+
     // single car get
     app.get('/singleCar/:id', async(req, res) => {
       const id = req.params.id;
@@ -73,7 +82,7 @@ async function run() {
         const id = req.params.id;
         const Object = { _id: ObjectId(id) };
         const result = await ordersCollection.deleteOne(Object);
-        console.log(result)
+        // console.log(result)
         res.send(result)
       });
 
