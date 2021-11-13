@@ -26,11 +26,11 @@ async function run() {
     const usersCollection = database.collection("users");
 
     // all cars get
-    app.get('/cars', async(req, res) => {
+    app.get("/cars", async (req, res) => {
       const cursor = carsCollection.find({});
       const result = await cursor.toArray();
       res.send(result);
-    })
+    });
 
     // Add Product To The Current Cars Collection
     app.post("/addProduct", async (req, res) => {
@@ -47,89 +47,85 @@ async function run() {
       res.send(result);
     });
 
-
     // single car get
-    app.get('/singleCar/:id', async(req, res) => {
+    app.get("/singleCar/:id", async (req, res) => {
       const id = req.params.id;
-      const Object = {_id: ObjectId(id)};
+      const Object = { _id: ObjectId(id) };
       const result = await carsCollection.find(Object).toArray();
       res.send(result);
-    })
+    });
 
-      // add orders to the database
-      app.post('/addOrders', async(req, res) => {
-        const orders = req.body;
-        const result = await ordersCollection.insertOne(orders)
-        res.send(result)
-      })
+    // add orders to the database
+    app.post("/addOrders", async (req, res) => {
+      const orders = req.body;
+      const result = await ordersCollection.insertOne(orders);
+      res.send(result);
+    });
 
-      // my order get process
-      app.get("/myOrders/:email", async(req, res) => {
-        const order = req.params.email;
-        const result = await ordersCollection.find({email: order}).toArray();
-        res.send(result);
-      });
+    // my order get process
+    app.get("/myOrders/:email", async (req, res) => {
+      const order = req.params.email;
+      const result = await ordersCollection.find({ email: order }).toArray();
+      res.send(result);
+    });
 
-      // All orders get process for manage orders
-      app.get('/orders', async(req, res) => {
-        const cursor = ordersCollection.find({});
-        const result = await cursor.toArray();
-        res.send(result)
-      })
+    // All orders get process for manage orders
+    app.get("/orders", async (req, res) => {
+      const cursor = ordersCollection.find({});
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
-      // customer ordered item delete process
-      app.delete("/deleteProduct/:id", async(req, res) => {
-        const id = req.params.id;
-        const Object = { _id: ObjectId(id) };
-        const result = await ordersCollection.deleteOne(Object);
-        // console.log(result)
-        res.send(result)
-      });
+    // customer ordered item delete process
+    app.delete("/deleteProduct/:id", async (req, res) => {
+      const id = req.params.id;
+      const Object = { _id: ObjectId(id) };
+      const result = await ordersCollection.deleteOne(Object);
+      // console.log(result)
+      res.send(result);
+    });
 
-      // customer review
-      app.post("/addReview", async(req, res) => {
-        const review = req.body;
-        const result = await reviewCollection.insertOne(review);
-        res.send(result)
-      });
+    // customer review
+    app.post("/addReview", async (req, res) => {
+      const review = req.body;
+      const result = await reviewCollection.insertOne(review);
+      res.send(result);
+    });
 
-      // review get process
-      app.get("/review", async (req, res) => {
-        const cursor = await reviewCollection.find({}).toArray();
-        res.send(cursor)
-      });
+    // review get process
+    app.get("/review", async (req, res) => {
+      const cursor = await reviewCollection.find({}).toArray();
+      res.send(cursor);
+    });
 
-      // USER DATA POST METHOD FOR ADMIN CREATION
-      app.post('/users', async(req, res) => {
-        const user = req.body;
-        const result = await usersCollection.insertOne(user);
-        res.send(result)
-      })
+    // USER DATA POST METHOD FOR ADMIN CREATION
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
+    });
 
-      // make admin process for google sing in
-      app.put("/users", async (req, res) => {
-        const user = req.body;
-        console.log(user)
-        const filter = { email: user.email };
-        const options = { upsert: true };
-        const updateDoc = { $set: user };
-        const result = await usersCollection.updateOne(
-          filter,
-          updateDoc,
-          options
-        );
-        res.json(result);
-      });
+    app.put("/makeAdmin", async (req, res) => {
+      const filter = { email: req.body.email };
+      const result = await usersCollection.find(filter).toArray();
+      if (result) {
+        const documents = await usersCollection.updateOne(filter, {
+          $set: { role: "admin" },
+        });
+      }
+      console.log(result);
+      res.send(result);
+    });
 
-      // Make Admin process for registration
-      app.put('/users/admin', async(req, res) => {
-        const user = req.query;
-        const filter = {email: user.email};
-        const updateDoc = {$set: {role: 'admin'}};
-        const result = await usersCollection.updateOne(filter, updateDoc)
-        console.log(user);
-        res.send(result);
-      })
+    // check admin or not
+    app.get("/checkAdmin/:email", async (req, res) => {
+      const result = await usersCollection
+        .find({ email: req.params.email })
+        .toArray();
+      console.log(result);
+      res.send(result);
+    });
+
 
   }
   finally {
