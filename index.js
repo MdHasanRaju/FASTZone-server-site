@@ -32,6 +32,13 @@ async function run() {
       res.send(result);
     })
 
+    // Add Product To The Current Cars Collection
+    app.post("/addProduct", async (req, res) => {
+      const product = req.body;
+      const result = await carsCollection.insertOne(product);
+      res.send(result);
+    });
+
     // single car get
     app.get('/singleCar/:id', async(req, res) => {
       const id = req.params.id;
