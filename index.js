@@ -81,7 +81,6 @@ async function run() {
       const id = req.params.id;
       const Object = { _id: ObjectId(id) };
       const result = await ordersCollection.deleteOne(Object);
-      // console.log(result)
       res.send(result);
     });
 
@@ -113,7 +112,6 @@ async function run() {
           $set: { role: "admin" },
         });
       }
-      console.log(result);
       res.send(result);
     });
 
@@ -122,10 +120,22 @@ async function run() {
       const result = await usersCollection
         .find({ email: req.params.email })
         .toArray();
-      console.log(result);
       res.send(result);
     });
 
+    // status update method
+    app.put("/statusUpdate/:id", async(req, res) => {
+      const id = req.params.id;
+      const filter = {_id:ObjectId(id)};
+      const result = await ordersCollection.updateOne(filter, {
+        $set:{
+          status: req.body.status
+        }
+      })
+      console.log(result);
+      res.send(result);
+
+    })
 
   }
   finally {
